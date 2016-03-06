@@ -104,17 +104,7 @@ class SRWEarlyStopping():
         self.w = res.x
     
     def calc_loss(self):
-        pairs = np.transpose([np.tile(self.positives, len(self.negatives)), np.repeat(self.negatives, len(self.positives))])
-        b = .01
-        loss = 0
-
-        delta = self.ranking[pairs[:, 1]] - self.ranking[pairs[:, 0]]
-        exponent = -delta / b
-        if np.any(exponent > 709):
-            print 'delta:', delta
-            raise Exception('Upcoming overflow in exp')
-        losses = 1 / (1 + np.exp(exponent))
-        loss = losses.sum()
+        loss = calc_real_loss_without_reg()
         return (self.loss_factor * loss) + (np.linalg.norm(self.w)**2 * self.regularization_factor)
     
     
